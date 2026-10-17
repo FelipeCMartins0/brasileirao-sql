@@ -19,7 +19,7 @@ CREATE TABLE clube(
 CREATE TABLE partida(
 	id INT UNSIGNED PRIMARY KEY, -- ID vem do CSV
 	rodada TINYINT UNSIGNED NOT NULL,
-    temporada SMALLINT UNSIGNED NOT NULL,
+	temporada SMALLINT UNSIGNED NOT NULL,
 	data_partida DATE NOT NULL,
 	hora TIME NULL,
 	mandante_id INT UNSIGNED NOT NULL,
@@ -36,7 +36,7 @@ CREATE TABLE partida(
 	CONSTRAINT fk_partida_visitante FOREIGN KEY (visitante_id) REFERENCES clube(id),
 	CONSTRAINT fk_partida_vencedor FOREIGN KEY (vencedor_id) REFERENCES clube(id),
 	CONSTRAINT ck_partida_times CHECK (mandante_id <> visitante_id),
-    INDEX idx_partida_temporada (temporada)
+	INDEX idx_partida_temporada (temporada)
 );
 
 CREATE TABLE gol(

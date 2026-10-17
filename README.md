@@ -77,15 +77,15 @@ Gabriel Barbosa lidera com 101 gols. `RANK()` em vez de `LIMIT 10`: há 5 jogado
 **3. Vantagem do mandante por temporada** — `AVG()` sobre comparações.
 Entre 2009 e 2018, o mandante venceu 47–53% das partidas; entre 2019 e 2024, 44–48%. Em 2020, disputado sem público, a taxa foi de 45,0%, abaixo de 2019 (48,4%), mas acima de 2017 (43,9%), quando havia torcida. Os dados indicam queda gradual da vantagem de jogar em casa; o ano sem público não se destaca da variação normal.
 
-**4. Disciplina por clube (2014–2024)** — CTEs, agregação condicional, jogos contados por `partida` (inclui jogos sem cartão). Mais cartões por jogo: Coritiba (2,88), Juventude (2,87), Figueirense (2,84) e Vasco (2,83). Menos cartões por jogo: Corinthians (2,17), América-MG (2,20), Chapecoense (2,22) e Flamengo (2,23). A diferença entre o clube mais e o menos punido é de cerca de 0,7 cartão por jogo.
+**4. Disciplina por clube (2014–2024)** — CTEs, agregação condicional, jogos contados por `partida` (inclui jogos sem cartão), mínimo de 100 jogos.
+Mais cartões por jogo: Coritiba (2,88), Juventude (2,87), Figueirense (2,84) e Vasco (2,83). Menos cartões por jogo: Corinthians (2,17), América-MG (2,20), Chapecoense (2,22) e Flamengo (2,23). A diferença entre o clube mais e o menos punido é de cerca de 0,7 cartão por jogo.
 
 **5. Top 3 artilheiros de cada clube** — `RANK() OVER (PARTITION BY clube)`.
 
 **6. Posse de bola × resultado (2014–2024)** — `CASE` em faixas.
-Clubes com menos de 40% de posse venceram 42,8% dos jogos; com 60% ou mais, 29,6%. Posse alta não se traduziu em vitória. Uma explicação provável é a causalidade invertida: quem sai na frente tende a ceder a bola. Os dados mostram associação, não causa. A associação da posse ao time correto foi validada contra o número de passes (05_validacao.sql).
+Clubes com menos de 40% de posse venceram 42,8% dos jogos; com 60% ou mais, 29,6%. Posse alta não se traduziu em vitória. Uma explicação provável é a causalidade invertida: quem sai na frente tende a ceder a bola. Os dados mostram associação, não causa. A associação da posse ao time correto foi validada contra o número de passes (`05_validacao.sql`).
 
-**7. Clássicos estaduais (20 clubes com mais jogos)** — subconsulta (top 20) + JOIN por estado + HAVING (mínimo de 30 clássicos).
-Rival definido como clube do mesmo estado. Nenhum clube passa de 52,2% de aproveitamento contra rivais estaduais (Cruzeiro, em 46 jogos), o que confirma o equilíbrio dos clássicos. No outro extremo estão Ponte Preta (36,1%) e Fluminense (39,7%), único clube grande abaixo de 40%.
+**7. Clássicos estaduais (20 clubes com mais jogos)** — subconsulta (top 20) + `JOIN` por estado + `HAVING` (mínimo de 30 clássicos). Rival definido como clube do mesmo estado. Nenhum clube passa de 52,2% de aproveitamento contra rivais estaduais (Cruzeiro, em 46 jogos), o que confirma o equilíbrio dos clássicos. No outro extremo estão Ponte Preta (36,1%) e Fluminense (39,7%), único clube grande abaixo de 40%.
 
 ## Views
 
