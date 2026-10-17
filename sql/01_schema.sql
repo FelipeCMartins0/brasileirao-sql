@@ -17,24 +17,26 @@ CREATE TABLE clube(
 );
 
 CREATE TABLE partida(
-	id INT UNSIGNED PRIMARY KEY,
+	id INT UNSIGNED PRIMARY KEY, -- ID vem do CSV
 	rodada TINYINT UNSIGNED NOT NULL,
+    temporada SMALLINT UNSIGNED NOT NULL,
 	data_partida DATE NOT NULL,
 	hora TIME NULL,
 	mandante_id INT UNSIGNED NOT NULL,
 	visitante_id INT UNSIGNED NOT NULL,
-	vencedor_id INT UNSIGNED NULL,
+	vencedor_id INT UNSIGNED NULL, -- NULL = empate
 	placar_mandante TINYINT UNSIGNED NOT NULL,
 	placar_visitante TINYINT UNSIGNED NOT NULL,
 	arena VARCHAR(100) NULL,
 	formacao_mandante VARCHAR(10) NULL,
 	formacao_visitante VARCHAR(10) NULL,
-	tecnico_mandante VARCHAR (60) NULL,
+	tecnico_mandante VARCHAR(60) NULL,
 	tecnico_visitante VARCHAR(60) NULL,
 	CONSTRAINT fk_partida_mandante FOREIGN KEY (mandante_id) REFERENCES clube(id),
 	CONSTRAINT fk_partida_visitante FOREIGN KEY (visitante_id) REFERENCES clube(id),
 	CONSTRAINT fk_partida_vencedor FOREIGN KEY (vencedor_id) REFERENCES clube(id),
-	CONSTRAINT ck_partida_times CHECK (mandante_id <> visitante_id)
+	CONSTRAINT ck_partida_times CHECK (mandante_id <> visitante_id),
+    INDEX idx_partida_temporada (temporada)
 );
 
 CREATE TABLE gol(
@@ -55,7 +57,7 @@ CREATE TABLE cartao(
 	clube_id INT UNSIGNED NOT NULL,
 	tipo VARCHAR(10) NOT NULL,
 	atleta VARCHAR(80) NOT NULL,
-	num_camisa TINYINT UNSIGNED NULL,
+	num_camisa SMALLINT UNSIGNED NULL,
 	posicao VARCHAR(30) NULL,
 	minuto TINYINT UNSIGNED NOT NULL,
 	acrescimo TINYINT UNSIGNED NULL,

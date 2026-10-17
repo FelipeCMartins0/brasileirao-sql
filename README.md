@@ -82,7 +82,7 @@ Entre 2009 e 2018, o mandante venceu 47–53% das partidas; entre 2019 e 2024, 4
 **5. Top 3 artilheiros de cada clube** — `RANK() OVER (PARTITION BY clube)`.
 
 **6. Posse de bola × resultado (2014–2024)** — `CASE` em faixas.
-Clubes com menos de 40% de posse venceram 42,8% dos jogos; com 60% ou mais, 29,6%. Posse alta não se traduziu em vitória. Uma explicação provável é a causalidade invertida: quem sai na frente tende a ceder a bola. Os dados mostram associação, não causa.
+Clubes com menos de 40% de posse venceram 42,8% dos jogos; com 60% ou mais, 29,6%. Posse alta não se traduziu em vitória. Uma explicação provável é a causalidade invertida: quem sai na frente tende a ceder a bola. Os dados mostram associação, não causa. A associação da posse ao time correto foi validada contra o número de passes (05_validacao.sql).
 
 **7. Clássicos estaduais (20 clubes com mais jogos)** — subconsulta (top 20) + JOIN por estado + HAVING (mínimo de 30 clássicos).
 Rival definido como clube do mesmo estado. Nenhum clube passa de 52,2% de aproveitamento contra rivais estaduais (Cruzeiro, em 46 jogos), o que confirma o equilíbrio dos clássicos. No outro extremo estão Ponte Preta (36,1%) e Fluminense (39,7%), único clube grande abaixo de 40%.
