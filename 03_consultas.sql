@@ -83,7 +83,7 @@ FROM jogos j
 JOIN cartoes ca ON ca.clube_id = j.clube_id
 JOIN clube c ON c.id = j.clube_id
 WHERE j.jogos >= 100	-- remove clubes com poucas temporadas
-ORDER BY total DESC;
+ORDER BY total_por_jogo DESC;
 
 -- 5) Top 3 artilheiros de cada clube (2014–2024)
 SELECT clube, atleta, gols
@@ -92,8 +92,66 @@ FROM (
 		RANK() OVER (PARTITION BY c.nome ORDER BY COUNT(*) DESC) AS posicao
 	FROM gol g
 	JOIN clube c ON c.id = g.clube_id
-	WHERE g.tipo IS NULL OR g.tipo <> 'Gol contra'
+	WHERE g.tipo IS NULL OR g.tipo <> 'Gol Contra'
 	GROUP BY c.nome, g.atleta
 ) t
 WHERE posicao <= 3
 ORDER BY clube, gols DESC;
+
+-- 6) Posse de bola x resultado (2014–2024)
+SELECT faixa_posse, COUNT(*) AS jogos,
+	ROUND(100 * AVG(gp > gc), 1) AS pct_vitoria,
+	ROUND(100 * AVG(gp = gc), 1) AS pct_empate,
+	ROUND(100 * AVG(gp < gc), 1) AS pct_derrota
+FROM (
+	SELECT
+		CASE
+			WHEN e.posse_bola < 40 THEN '1. menos de 40%'
+			WHEN e.posse_bola < 50 THEN '2. 40 a 49%'
+			WHEN e.posse_bola < 60 THEN '3. 50 a 59%'
+			ELSE '4. 60% ou mais'
+		END AS faixa_posse,
+		IF(e.clube_id = p.mandante_id, p.placar_mandante, p.placar_visitante) AS gp,
+		IF(e.clube_id = p.mandante_id, p.placar_visitante, p.placar_mandante) AS gc
+	FROM estatistica e
+	JOIN partida p ON p.id = e.partida_id
+	WHERE e.posse_bola IS NOT NULL
+) t
+GROUP BY faixa_posse
+ORDER BY faixa_posse;
+
+-- 7) Desempenho nos clássicos estaduais (20 clubes com mais jogos)
+WITH top20 AS (
+	SELECT clube_id
+	FROM (
+		SELECT mandante_id AS clube_id FROM partida
+		UNION ALL
+		SELECT visitante_id FROM partida
+	) t
+	GROUP BY clube_id
+	ORDER BY COUNT(*) DESC
+	LIMIT 20
+),
+jogos AS (
+	SELECT mandante_id AS clube_id, visitante_id AS adversario_id,
+		placar_mandante AS gp, placar_visitante AS gc
+	FROM partida
+	UNION ALL
+	SELECT visitante_id, mandante_id, placar_visitante, placar_mandante
+	FROM partida
+)
+SELECT c.nome, c.estado,
+	COUNT(*) AS jogos,
+	SUM(j.gp > j.gc) AS vitorias,
+	SUM(j.gp = j.gc) AS empates,
+	SUM(j.gp < j.gc) AS derrotas,
+	ROUND(100 * SUM(CASE WHEN j.gp > j.gc THEN 3 WHEN j.gp = j.gc THEN 1 ELSE 0 END)
+		/ (3 * COUNT(*)), 1) AS aproveitamento
+FROM jogos j
+JOIN top20 t ON t.clube_id = j.clube_id
+JOIN clube c ON c.id = j.clube_id
+JOIN clube a ON a.id = j.adversario_id
+WHERE c.estado = a.estado          -- mesmo estado = clássico
+GROUP BY c.nome, c.estado
+HAVING COUNT(*) >= 30        -- mínimo de 30 clássicos
+ORDER BY aproveitamento DESC;
